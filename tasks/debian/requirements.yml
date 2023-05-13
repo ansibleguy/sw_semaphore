@@ -44,3 +44,5 @@
       register: sem_req_role
       changed_when: "'was installed' in sem_req_role.stdout"
       loop: "{{ SEM_CONFIG.requirements.roles }}"
+
+# todo: service/timer to update python-modules,collections,roles

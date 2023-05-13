@@ -8,6 +8,7 @@ Documentation=https://github.com/ansibleguy/sw_semaphore
 
 [Service]
 ExecStart=/bin/bash -c 'mysqldump --socket /run/mysqld/mysqld_semaphore.sock semaphore | xz -7 > {{ SEM_CONFIG.path.backup }}/sem_db_$(date '+%%Y_%%m_%%d_%%H_%%M_%%S').sql.xz'
+ExecStartPost=/bin/bash -c 'chmod 600 {{ SEM_CONFIG.path.backup }}/sem_db_*.sql.xz'
 ExecStartPost=/bin/bash -c 'echo "Deleting old backups:" && find {{ SEM_CONFIG.path.backup }}/ -name "sem_db_*.sql.xz" -type f -mtime +{{ SEM_CONFIG.backup.retention_days }}'
 ExecStartPost=/bin/bash -c 'find {{ SEM_CONFIG.path.backup }}/ -name "sem_db_*.sql.xz" -type f -mtime +{{ SEM_CONFIG.backup.retention_days }} -delete'
 
