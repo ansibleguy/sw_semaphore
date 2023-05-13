@@ -26,7 +26,39 @@
   no_log: true
   failed_when:
     - sem_cur_cnf.failed
-    - "'No such file or directory' not in sem_cur_cnf.msg"
+    - "'No such file or directory' not in sem_cur_cnf.stderr"
+
+- name: Semaphore | Config | Generate secrets
+  when: sem_cur_cnf.stdout | default(none, true) is none
+  connection: local
+  become: false
+  block:
+    - name: Semaphore | Config | Generate 'cookie_hash'
+      ansible.builtin.shell: |
+        set -o pipefail
+        head -c32 /dev/urandom | base64
+      no_log: true
+      args:
+        executable: '/bin/bash'
+      register: sem_rawsec_ch
+
+    - name: Semaphore | Config | Generate 'cookie_encryption'
+      ansible.builtin.shell: |
+        set -o pipefail
+        head -c32 /dev/urandom | base64
+      no_log: true
+      args:
+        executable: '/bin/bash'
+      register: sem_rawsec_ce
+
+    - name: Semaphore | Config | Generate 'access_key_encryption'
+      ansible.builtin.shell: |
+        set -o pipefail
+        head -c32 /dev/urandom | base64
+      no_log: true
+      args:
+        executable: '/bin/bash'
+      register: sem_rawsec_ke
 
 - name: Semaphore | Config | Writing config
   ansible.builtin.template:
@@ -42,5 +74,10 @@
     # config now
     cnf_n: "{{ SEM_CONFIG.config }}"
     # config before
-    cnf_b: "{{ sem_cur_cnf.stdout | default('') | from_json }}"
+    cnf_b: "{{ sem_cur_cnf.stdout | default('{}', true) | from_json }}"
+    # generated secrets (first time)
+    cnf_g:
+      cookie_hash: "{{ sem_rawsec_ch.stdout | default('') }}"
+      cookie_encryption: "{{ sem_rawsec_ce.stdout | default('') }}"
+      access_key_encryption: "{{ sem_rawsec_ke.stdout | default('') }}"
   notify: Sem-restart

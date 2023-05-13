@@ -23,7 +23,7 @@
 
 - name: Semaphore | Setup | Informing user
   ansible.builtin.pause:
-    prompt: "You can logon to the Ansible-Semaphore instance using this credentials:
+    prompt: "You can logon to the Ansible-Semaphore instance using these credentials:
     '{{ SEM_CONFIG.admin.user }}' | '{{ SEM_CONFIG.admin.pwd }}'"
     seconds: 3
   when: SEM_CONFIG.admin.user not in sem_users.stdout_lines

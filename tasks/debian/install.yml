@@ -48,7 +48,7 @@
         dest: "{{ sem_dl_dir.path }}"
         remote_src: true
 
-    - name: Semaphore | Install | Installing
+    - name: Semaphore | Install | Binary
       ansible.builtin.copy:
         src: "{{ sem_dl_dir.path }}/semaphore"
         remote_src: true

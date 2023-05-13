@@ -3,7 +3,15 @@
 - name: Converge
   hosts: grp_targets
   vars:
-    semaphore: {}
+    no_prompts: true  # mariadb prompts
+
+    semaphore:
+      nginx:
+        domain: 'semaphore.test.ansibleguy.net'
+      admin:
+        user: 'admin'
+        name: 'AnsibleGuy'
+        email: 'semaphore@test.ansibleguy.net'
 
   roles:
     - ansibleguy.sw_semaphore
