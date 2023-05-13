@@ -6,6 +6,8 @@
 
 Role to provision [Ansible Semaphore](https://github.com/ansible-semaphore/semaphore) on a linux server.
 
+Semaphore is a lightweight alternative to [Ansible AWX](ttps://github.com/ansibleguy/sw_awx). (_WebUI for Ansible usage_)
+
 [![Molecule Test Status](https://badges.ansibleguy.net/sw_semaphore.molecule.svg)](https://github.com/ansibleguy/_meta_cicd/blob/latest/templates/usr/local/bin/cicd/molecule.sh.j2)
 [![YamlLint Test Status](https://badges.ansibleguy.net/sw_semaphore.yamllint.svg)](https://github.com/ansibleguy/_meta_cicd/blob/latest/templates/usr/local/bin/cicd/yamllint.sh.j2)
 [![PyLint Test Status](https://badges.ansibleguy.net/sw_semaphore.pylint.svg)](https://github.com/ansibleguy/_meta_cicd/blob/latest/templates/usr/local/bin/cicd/pylint.sh.j2)
@@ -76,7 +78,10 @@ ansible-galaxy install -r requirements.yml
 * **Warning:** Not every setting/variable you provide will be checked for validity. Bad config might break the role!
 
 
-* **Info:* Persistent requirements can be used to speed up executions:
+* **Note:** If you like to use docker => you might want to check out [the official docker-image of Ansible-Semaphore](https://hub.docker.com/r/semaphoreui/semaphore) instead!
+
+
+* **Info:** Persistent requirements can be used to speed up executions:
 
   It will install & update ansible-roles & ansible-collections using an external service/timer.
 
@@ -90,6 +95,21 @@ ansible-galaxy install -r requirements.yml
 ## Usage
 
 ### Config
+
+Minimal config:
+
+```yaml
+semaphore:
+  nginx:
+    domain: 'semaphore.test.ansibleguy.net'
+
+  # optional:
+  # version: '2.8.90'
+  # admin:
+  #   user: 'admin'
+  #   name: 'AnsibleGuy'
+  #   email: 'semaphore@template.ansibleguy.net'
+```
 
 Define the config as needed:
 
@@ -155,15 +175,6 @@ semaphore:
 
   backup:
     retention_days: 30
-
-```
-
-Minimal config:
-
-```yaml
-semaphore:
-  version: '2.8.90'
-  
 ```
 
 You might want to use 'ansible-vault' to encrypt your passwords:
