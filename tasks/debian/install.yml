@@ -1,0 +1,103 @@
+---
+
+- name: Semaphore | Install | Service user
+  ansible.builtin.user:
+    name: "{{ SEM_HC.user }}"
+    state: present
+    home: "{{ SEM_HC.home }}"
+  when: SEM_CONFIG.manage.user | bool
+
+- name: Semaphore | Install | Directories (read-only)
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0750
+    owner: 'root'
+    group: "{{ SEM_HC.user }}"
+  loop:
+    - "{{ SEM_HC.home }}"
+    - "{{ SEM_HC.config | dirname }}"
+    - "{{ SEM_CONFIG.path.venv }}"
+    - "{{ SEM_CONFIG.path.backup }}"
+
+- name: Semaphore | Install | Checking if semaphore is installed
+  ansible.builtin.stat:
+    path: "{{ SEM_HC.bin }}"
+  register: sem_cur_bin
+
+- name: Semaphore | Install | Pulling semaphore version
+  ansible.builtin.command: "{{ SEM_HC.bin }} version"
+  register: sem_cur_version
+  when: sem_cur_bin.stat.exists
+  changed_when: false
+  check_mode: false
+
+- name: "Semaphore | Install | Installing version {{ SEM_CONFIG.version }}"
+  when: >
+    not sem_cur_bin.stat.exists or
+    sem_cur_version.stdout != 'v' + SEM_CONFIG.version
+  block:
+    - name: Semaphore | Install | Creating download directory
+      ansible.builtin.tempfile:
+        state: directory
+      register: sem_dl_dir
+
+    - name: Semaphore | Install | Downloading
+      ansible.builtin.unarchive:
+        src: "{{ SEM_HC.dl_tmpl | replace('%s', SEM_CONFIG.version) }}"
+        dest: "{{ sem_dl_dir.path }}"
+        remote_src: true
+
+    - name: Semaphore | Install | Installing
+      ansible.builtin.copy:
+        src: "{{ sem_dl_dir.path }}/semaphore"
+        remote_src: true
+        dest: "{{ SEM_HC.bin }}"
+        owner: root
+        group: "{{ SEM_HC.user }}"
+        mode: 0750
+      notify: Sem-restart
+
+- name: Semaphore | Install | Service
+  ansible.builtin.template:
+    src: 'templates/etc/systemd/system/semaphore.service.j2'
+    dest: "/etc/systemd/system/{{ SEM_HC.service }}"
+    mode: 0644
+  notify: Sem-restart
+
+- name: Semaphore | Install | Enabling Service
+  ansible.builtin.systemd:
+    name: "{{ SEM_HC.service }}"
+    enabled: true
+
+- name: Semaphore | Install | Managing database
+  ansible.builtin.include_role:
+    name: ansibleguy.infra_mariadb
+  vars:
+    mariadb:
+      instances:
+        semaphore: "{{ SEM_MARIADB_INSTANCE }}"
+  args:
+    apply:
+      tags: database
+  when: SEM_CONFIG.manage.database | bool
+  tags: database
+
+- name: Semaphore | Install | Unmanaged DB
+  ansible.builtin.pause:
+    prompt: 'Since this role is not managing the semaphore-database, you will need to install and configure it manually!
+    Make sure the database is reachable before continuing!'
+  when: not SEM_CONFIG.manage.database | bool
+
+- name: Semaphore | Install | Configuring Nginx webserver
+  ansible.builtin.include_role:
+    name: ansibleguy.infra_nginx
+  vars:
+    nginx:
+      sites:
+        semaphore: "{{ SEM_CONFIG.nginx }}"
+  when: SEM_CONFIG.manage.webserver | bool
+  tags: webserver
+  args:
+    apply:
+      tags: webserver

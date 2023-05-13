@@ -1,0 +1,46 @@
+---
+
+- name: Semaphore | Requirements | Installing python3-pip
+  ansible.builtin.apt:
+    name: 'python3-pip'
+    state: present
+
+- name: Semaphore | Requirements | Installing python3-virtualenv
+  ansible.builtin.pip:
+    name: 'virtualenv'
+    state: present
+
+- name: Semaphore | Requirements | Installing python3 modules into venv
+  ansible.builtin.pip:
+    name: "{{ SEM_CONFIG.requirements.pip }}"
+    virtualenv: "{{ SEM_CONFIG.path.venv }}"
+    state: present
+
+- name: Semaphore | Requirements | Updating venv ownership
+  ansible.builtin.file:
+    path: "{{ SEM_CONFIG.path.venv }}"
+    state: directory
+    owner: 'root'
+    group: "{{ SEM_HC.user }}"
+    recurse: true
+
+- name: Semaphore | Requirements | Persistent requirements
+  when: SEM_CONFIG.persistent_requirements | bool
+  block:
+    - name: Semaphore | Requirements | Installing ansible-collections
+      ansible.builtin.shell: "source {{ SEM_CONFIG.path.venv }}/bin/activate &&
+      ansible-galaxy collection install {{ item }}"
+      args:
+        executable: '/bin/bash'
+      register: sem_req_col
+      changed_when: "'was installed' in sem_req_col.stdout"
+      loop: "{{ SEM_CONFIG.requirements.collections }}"
+
+    - name: Semaphore | Requirements | Installing ansible-roles
+      ansible.builtin.shell: "source {{ SEM_CONFIG.path.venv }}/bin/activate &&
+      ansible-galaxy install {{ item }}"
+      args:
+        executable: '/bin/bash'
+      register: sem_req_role
+      changed_when: "'was installed' in sem_req_role.stdout"
+      loop: "{{ SEM_CONFIG.requirements.roles }}"

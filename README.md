@@ -2,8 +2,6 @@
 <img src="https://repository-images.githubusercontent.com/23267883/6521ff0c-6a8d-4b67-897e-40354ecd5391" alt="Ansible-Semaphore - modern UI for Ansible" width="600"/>
 </a>
 
-# WORK-IN-PROGRESS
-
 # Ansible Role - Ansible-Semaphore
 
 Role to provision [Ansible Semaphore](https://github.com/ansible-semaphore/semaphore) on a linux server.
@@ -21,6 +19,7 @@ Role to provision [Ansible Semaphore](https://github.com/ansible-semaphore/semap
 
 ## Install
 
+
 ```bash
 ansible-galaxy install ansibleguy.sw_semaphore
 
@@ -35,6 +34,7 @@ ansible-galaxy install -r requirements.yml
 
 * **Package installation**
   * Ansible-Semaphore in the specified version
+  * Python3 PIP
   * Python3 Virtual-Environment
     * Ansible
     * common Ansible Jinja-Filter dependencies
@@ -58,6 +58,7 @@ ansible-galaxy install -r requirements.yml
     * MariaDB database => using [THIS Role](https://github.com/ansibleguy/infra_mariadb)
     * Daily local database backup (_if database is managed_)
     * Provisioning 'ansible.cfg' for serviceuser
+    * Adding admin-user after installation
 
   * **Default opt-outs**:
     * Persistent requirements
@@ -100,11 +101,19 @@ semaphore:
     backup: true  # install service for daily local database backup (if database is managed)
     user: true  # create service-user 'semaphore'
     ansible_cfg: true  # provision /home/semaphore/ansible.cfg
+    admin: true  # add admin-user after installation
 
   version: '2.8.90'  # see: https://github.com/ansible-semaphore/semaphore/releases
 
   persistent_requirements: false
-  
+
+  admin:
+    user: 'admin'
+    email: 'admin@template.ansibleguy.net'
+    pwd: !vault |
+      $ANSIBLE_VAULT;1.1;AES256
+      ...
+
   config:  # config key-value pairs as set in 'config.json': https://docs.ansible-semaphore.com/administration-guide/configuration
     concurrency_mode: 'node'
     email_sender: 'semaphore@template.ansibleguy.net'
@@ -145,7 +154,7 @@ semaphore:
       context: 2
 
   backup:
-    retention: 30  # days
+    retention_days: 30
 
 ```
 

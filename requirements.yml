@@ -2,4 +2,13 @@
 # external roles and collections to download
 # install: ansible-galaxy install -r requirements.yml
 
-collections: []
+collections:
+  - 'community.general'
+  - 'ansible.posix'
+  - 'community.mysql'
+  - 'community.crypto'
+
+roles:
+  - src: 'ansibleguy.infra_apache'
+  - src: 'ansibleguy.infra_certs'
+  - src: 'ansibleguy.infra_mariadb'

@@ -1,0 +1,46 @@
+---
+
+- name: Semaphore | Config | ansible.cfg
+  ansible.builtin.copy:
+    content: |
+      # ansible_managed
+      {% for section, config in SEM_CONFIG.ansible_config.items() %}
+
+      [{{ section }}]
+      {%   for key, value in config.items() %}
+      {{ key }} = {{ value }}
+      {%   endfor %}
+      {% endfor %}
+    dest: "{{ SEM_HC.home }}/ansible.cfg"
+    mode: 0640
+    owner: 'root'
+    group: "{{ SEM_HC.user }}"
+  when: SEM_CONFIG.manage.ansible_cfg | bool
+
+# NOTE: pulling existing config to keep secrets that were auto-generated
+- name: Semaphore | Config | Pulling current config
+  ansible.builtin.command: "cat {{ SEM_HC.config }}"
+  register: sem_cur_cnf
+  changed_when: false
+  check_mode: false
+  no_log: true
+  failed_when:
+    - sem_cur_cnf.failed
+    - "'No such file or directory' not in sem_cur_cnf.msg"
+
+- name: Semaphore | Config | Writing config
+  ansible.builtin.template:
+    src: 'templates/etc/semaphore/config.json.j2'
+    dest: "{{ SEM_HC.config }}"
+    owner: 'root'
+    group: "{{ SEM_HC.user }}"
+    mode: 0640
+  no_log: true
+  vars:
+    # config for managed db
+    cnf_db: "{{ SEM_CONFIG.database }}"
+    # config now
+    cnf_n: "{{ SEM_CONFIG.config }}"
+    # config before
+    cnf_b: "{{ sem_cur_cnf.stdout | default('') | from_json }}"
+  notify: Sem-restart

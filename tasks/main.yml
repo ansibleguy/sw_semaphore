@@ -16,6 +16,50 @@
       - semaphore is defined
       - SEM_CONFIG.version | default(none, true) is not none
       - not SEM_CONFIG.version.startswith('v')
+  tags: always
+
+- name: Semaphore | Checking Nginx config
+  ansible.builtin.assert:
+    that:
+      - SEM_CONFIG.nginx.domain | default(none, true) is not none
+      - SEM_CONFIG.nginx.domain | valid_hostname
+      - SEM_CONFIG.nginx.ssl.mode != 'letsencrypt' or SEM_CONFIG.nginx.ssl.letsencrypt.mail | default(none, true) is not none
+  when: SEM_CONFIG.manage.webserver | bool
+  tags: webserver
+
+- name: Semaphore | Checking Database config if managed
+  ansible.builtin.assert:
+    that:
+      - SEM_CONFIG.config.mysql.host == '127.0.0.1:3306'
+      - SEM_CONFIG.config.mysql.user | default(none, true) is none
+      - SEM_CONFIG.config.mysql.pass | default(none, true) is none
+      - SEM_CONFIG.config.mysql.name | default(none, true) is none
+      - SEM_CONFIG.database.user | default(none, true) is not none
+      - SEM_CONFIG.database.pwd | default(none, true) is not none
+      - SEM_CONFIG.database.name | default(none, true) is not none
+  when: SEM_CONFIG.manage.database | bool
+  tags: [database, config]
+
+- name: Semaphore | Checking Database config if unmanaged
+  ansible.builtin.assert:
+    that:
+      - SEM_CONFIG.config[sem_db]host | default(none, true) is not none
+      - SEM_CONFIG.config[sem_db]user | default(none, true) is not none
+      - SEM_CONFIG.config[sem_db]pass | default(none, true) is not none
+      - SEM_CONFIG.config[sem_db]name | default(none, true) is not none
+  vars:
+    sem_db: "{{ SEM_CONFIG.config.dialect }}"
+  when: not SEM_CONFIG.manage.database | bool
+  tags: [database, config]
+
+- name: Semaphore | Checking Admin-User config
+  ansible.builtin.assert:
+    that:
+      - SEM_CONFIG.admin.user | default(none, true) is not none
+      - SEM_CONFIG.admin.pwd | default(none, true) is not none
+      - SEM_CONFIG.admin.email | default(none, true) is not none
+  when: SEM_CONFIG.manage.admin | bool
+  tags: config
 
 - name: Semaphore | Processing debian config
   ansible.builtin.import_tasks: debian/main.yml
@@ -23,8 +67,11 @@
 
 - name: Semaphore | Cleaning up temporary password files
   ansible.builtin.file:
-    path: "{{ tmp_pwd_file_prefix }}_mariadb"
+    path: "{{ tmp_pwd_file_prefix }}_{{ item }}"
     state: absent
   delegate_to: localhost
   become: false
   changed_when: false
+  loop:
+    - 'mariadb'
+    - 'admin'

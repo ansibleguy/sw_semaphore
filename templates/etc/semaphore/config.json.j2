@@ -1,0 +1,66 @@
+{
+  "mysql": {
+    "host": "{{ cnf_n.mysql.host | default(cnf_b.mysql.host, true) | default('', true) }}",
+{% if SEM_CONFIG.manage.database | bool %}
+    "user": "{{ cnf_b.mysql.user | default(cnf_db.user, true) }}",
+    "pass": "{{ cnf_b.mysql.pass | default(cnf_db.pwd, true) }}",
+    "name": "{{ cnf_b.mysql.name | default(cnf_db.name, true) }}",
+{% else %}
+    "user": "{{ cnf_n.mysql.user | default('', true) }}",
+    "pass": "{{ cnf_n.mysql.pass | default(cnf_b.mysql.pass, true) | default('', true) }}",
+    "name": "{{ cnf_n.mysql.name | default('', true) }}",
+{% endif %}
+    "options": null
+  },
+  "bolt": {
+    "host": "{{ cnf_n.bolt.host | default('', true) }}",
+    "user": "{{ cnf_n.bolt.user | default('', true) }}",
+    "pass": "{{ cnf_n.bolt.pass | default(cnf_b.bolt.pass, true) | default('', true) }}",
+    "name": "{{ cnf_n.bolt.name | default('', true) }}",
+    "options": null
+  },
+  "postgres": {
+    "host": "{{ cnf_n.postgres.host | default('', true) }}",
+    "user": "{{ cnf_n.postgres.user | default('', true) }}",
+    "pass": "{{ cnf_n.postgres.pass | default(cnf_b.postgres.pass, true) | default('', true) }}",
+    "name": "{{ cnf_n.postgres.name | default('', true) }}",
+    "options": null
+  },
+  "dialect": "{{ cnf_n.dialect }}",
+  "port": "{{ cnf_n.port }}",
+  "interface": "{{ cnf_n.interface }}",
+  "tmp_path": "{{ SEM_CONFIG.path.tmp }}",
+  "cookie_hash": "{{ cnf_n.cookie_hash | default(cnf_b.cookie_hash, true) }}",
+  "cookie_encryption": "{{ cnf_n.cookie_encryption | default(cnf_b.cookie_encryption, true) }}",
+  "access_key_encryption": "{{ cnf_n.access_key_encryption | default(cnf_b.access_key_encryption, true) }}",
+  "email_sender": "{{ cnf_n.email_sender }}",
+  "email_host": "{{ cnf_n.email_host }}",
+  "email_port": "{{ cnf_n.email_port }}",
+  "email_username": "{{ cnf_n.email_username }}",
+  "email_password": "{{ cnf_n.email_password | default(cnf_b.email_password, true) }}",
+  "web_host": "{{ cnf_n.web_host }}",
+  "ldap_binddn": "{{ cnf_n.ldap_binddn }}",
+  "ldap_bindpassword": "{{ cnf_n.ldap_bindpassword | default(cnf_b.ldap_bindpassword, true) }}",
+  "ldap_server": "{{ cnf_n.ldap_server }}",
+  "ldap_searchdn": "{{ cnf_n.ldap_searchdn }}",
+  "ldap_searchfilter": "{{ cnf_n.ldap_searchfilter }}",
+  "ldap_mappings": {
+    "dn": "{{ cnf_n.ldap_mappings.dn | default('', true) }}",
+    "mail": "{{ cnf_n.ldap_mappings.mail | default('', true) }}",
+    "uid": "{{ cnf_n.ldap_mappings.uid | default('', true) }}",
+    "cn": "{{ cnf_n.ldap_mappings.cn | default('', true) }}"
+  },
+  "telegram_chat": "{{ cnf_n.telegram_chat }}",
+  "telegram_token": "{{ cnf_n.telegram_token }}",
+  "slack_url": "{{ cnf_n.slack_url }}",
+  "max_parallel_tasks": {{ cnf_n.max_parallel_tasks }},
+  "ssh_config_path": "{{ cnf_n.ssh_config_path }}",
+  "email_alert": {{ cnf_n.email_alert | json_bool }},
+  "email_secure": {{ cnf_n.email_secure | json_bool }},
+  "telegram_alert": {{ cnf_n.telegram_alert | json_bool }},
+  "slack_alert": {{ cnf_n.slack_alert | json_bool }},
+  "ldap_enable": {{ cnf_n.ldap_enable | json_bool }},
+  "ldap_needtls": {{ cnf_n.ldap_needtls | json_bool }},
+  "demo_mode": {{ cnf_n.demo_mode | json_bool }},
+  "git_client": "{{ cnf_n.git_client | json_bool }}"
+ }

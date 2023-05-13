@@ -5,7 +5,7 @@ galaxy_info:
   namespace: 'ansibleguy'
   license: 'GPLv3'
   issue_tracker_url: 'https://github.com/ansibleguy/sw_semaphore/issues'
-  min_ansible_version: 2.14
+  min_ansible_version: '2.14'
   description: 'Ansible role to provision Ansible-Semaphore on a linux server'
   platforms:
     - name: Debian

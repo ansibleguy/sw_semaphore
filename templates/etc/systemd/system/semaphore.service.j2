@@ -1,0 +1,30 @@
+[Unit]
+Description=Ansible Semaphore
+Requires=network.target{% if SEM_CONFIG.manage.database %} mariadb@semaphore.service{% endif %}
+{% if SEM_CONFIG.manage.webserver %}Wants=nginx.service{% endif %}
+
+ConditionPathExists={{ SEM_HC.bin }}
+ConditionPathExists={{ SEM_HC.config }}
+
+Documentation=https://docs.ansible-semaphore.com/
+Documentation=https://github.com/ansibleguy/sw_semaphore
+
+[Service]
+ExecStart=/bin/bash -c 'source {{ SEM_CONFIG.path.venv }}/bin/activate && {{ SEM_HC.bin }} server --config {{ SEM_HC.config }}'
+ExecReload=/bin/kill -HUP $MAINPID
+User={{ SEM_HC.user }}
+Group={{ SEM_HC.user }}
+Restart=on-failure
+RestartSec=10s
+
+{% if ansible_distribution_version == '10' %}
+StandardOutput=syslog
+StandardError=syslog
+{% else %}
+StandardOutput=journal
+StandardError=journal
+{% endif %}
+SyslogIdentifier=semaphore
+
+[Install]
+WantedBy=multi-user.target

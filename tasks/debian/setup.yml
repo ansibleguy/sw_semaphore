@@ -1,0 +1,29 @@
+---
+
+- name: Semaphore | Setup | Running database migrations
+  ansible.builtin.command: "{{ SEM_HC.bin }} migrate --config {{ SEM_HC.config }}"
+  register: sem_mig
+  changed_when: "'Executing migration' in sem_mig.stdout"
+
+- name: Semaphore | Setup | Pulling existing users
+  ansible.builtin.command: "{{ SEM_HC.bin }} user list --config {{ SEM_HC.config }}"
+  register: sem_users
+  changed_when: false
+  check_mode: false
+
+- name: Semaphore | Setup | Adding admin user
+  ansible.builtin.command: "{{ SEM_HC.bin }} user add
+   --admin --login={{ SEM_CONFIG.admin.user }}
+   --name={{ SEM_CONFIG.admin.name | default(SEM_CONFIG.admin.user, true) }}
+   --email={{ SEM_CONFIG.admin.email }} --password={{ SEM_CONFIG.admin.pwd }}
+   --config {{ SEM_HC.config }}"
+  register: sem_admin
+  changed_when: "'added' in sem_admin.stdout"
+  when: SEM_CONFIG.admin.user not in sem_users.stdout_lines
+
+- name: Semaphore | Setup | Informing user
+  ansible.builtin.pause:
+    prompt: "You can logon to the Ansible-Semaphore instance using this credentials:
+    '{{ SEM_CONFIG.admin.user }}' | '{{ SEM_CONFIG.admin.pwd }}'"
+    seconds: 3
+  when: SEM_CONFIG.admin.user not in sem_users.stdout_lines

@@ -1,0 +1,13 @@
+# {{ ansible_managed }}
+# ansibleguy.sw_semaphore
+
+[Unit]
+Description=Timer to back-up Ansible-Semaphore database
+
+[Timer]
+OnCalendar={{ SEM_CONFIG.backup.timer }}
+Persistent=false
+WakeSystem=false
+
+[Install]
+WantedBy=multi-user.target

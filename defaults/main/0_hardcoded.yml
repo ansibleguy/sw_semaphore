@@ -5,5 +5,9 @@ tmp_pwd_file_prefix: '/tmp/.ansibleguy.sw_semaphore'
 
 SEM_HC:
   bin: '/usr/local/bin/semaphore'
-  dl_tmpl: "https://github.com/ansible-semaphore/semaphore/releases/download/v%s/semaphore_%s_linux_{{ ansible_architecture }}.tar.gz"
+  config: '/etc/semaphore/config.json'
+  dl_tmpl: "https://github.com/ansible-semaphore/semaphore/releases/download/v%s/semaphore_%s_linux_amd64.tar.gz"
   user: 'semaphore'
+  home: '/home/semaphore'
+  service: 'semaphore.service'
+  service_backup: 'backup-semaphore'

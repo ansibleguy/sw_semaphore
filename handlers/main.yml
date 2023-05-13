@@ -1,0 +1,7 @@
+---
+
+- name: Sem-restart
+  ansible.builtin.systemd:
+    name: "{{ SEM_HC.service }}"
+    state: restarted
+    daemon_reload: true
