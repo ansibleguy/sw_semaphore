@@ -1,0 +1,30 @@
+---
+
+- name: Semaphore | Showing debug info - user provided config
+  ansible.builtin.debug:
+    var: semaphore
+  when: debug | bool
+
+- name: Semaphore | Showing debug info - running config
+  ansible.builtin.debug:
+    var: SEM_CONFIG
+  when: debug | bool
+
+- name: Semaphore | Checking config
+  ansible.builtin.assert:
+    that:
+      - semaphore is defined
+      - SEM_CONFIG.version | default(none, true) is not none
+      - not SEM_CONFIG.version.startswith('v')
+
+- name: Semaphore | Processing debian config
+  ansible.builtin.import_tasks: debian/main.yml
+  when: "ansible_distribution|lower in ['debian', 'ubuntu']"
+
+- name: Semaphore | Cleaning up temporary password files
+  ansible.builtin.file:
+    path: "{{ tmp_pwd_file_prefix }}_mariadb"
+    state: absent
+  delegate_to: localhost
+  become: false
+  changed_when: false

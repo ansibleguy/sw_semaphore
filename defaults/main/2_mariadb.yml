@@ -1,0 +1,16 @@
+---
+
+SEM_MARIADB_INSTANCE: "{{ {
+  'dbs': {
+    SEM_CONFIG.database.name: {},
+  },
+  'users': {
+    SEM_CONFIG.database.user: {
+      'priv': SEM_CONFIG.database.name + '.*:ALL',
+      'pwd': SEM_CONFIG.database.pwd,
+      'update_pwd': SEM_CONFIG.database.update_password
+    },
+  },
+  'settings': SEM_CONFIG.database.settings,
+  'socket': '/run/mysqld/mysqld_semaphore.sock'
+} }}"  # DO NOT CHANGE!

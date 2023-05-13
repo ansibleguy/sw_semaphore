@@ -1,0 +1,9 @@
+---
+
+- name: Converge
+  hosts: grp_targets
+  vars:
+    semaphore: {}
+
+  roles:
+    - ansibleguy.sw_semaphore

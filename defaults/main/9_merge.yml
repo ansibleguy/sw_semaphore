@@ -1,0 +1,12 @@
+---
+
+SEM_CONFIG: "{{ defaults_sem | combine(semaphore, recursive=true) }}"
+
+sem_conditionals_config:
+  mysql:
+    name: "{{ SEM_CONFIG.database.name }}"
+    user: "{{ SEM_CONFIG.database.user }}"
+    pass: "{{ SEM_CONFIG.database.pwd }}"
+
+  port: "{{ SEM_CONFIG.config.port | default(SEM_config.nginx.proxy.port, true) }}"
+  tmp_path: "{{ SEM_CONFIG.config.tmp_path | default(SEM_config.path.tmp, true) }}"

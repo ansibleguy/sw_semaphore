@@ -1,0 +1,9 @@
+---
+
+random_pwd_length: '50'
+tmp_pwd_file_prefix: '/tmp/.ansibleguy.sw_semaphore'
+
+SEM_HC:
+  bin: '/usr/local/bin/semaphore'
+  dl_tmpl: "https://github.com/ansible-semaphore/semaphore/releases/download/v%s/semaphore_%s_linux_{{ ansible_architecture }}.tar.gz"
+  user: 'semaphore'
