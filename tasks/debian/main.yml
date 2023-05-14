@@ -30,4 +30,3 @@
     - "'Could not find the requested service' not in sem_dis_backup.msg"
   when: not SEM_CONFIG.manage.backup | bool
   tags: backup
-
