@@ -40,6 +40,7 @@ ansible-galaxy install -r requirements.yml
   * Python3 Virtual-Environment
     * Ansible
     * common Ansible Jinja-Filter dependencies
+  * Git
 
 
 * **Configuration**
@@ -122,7 +123,7 @@ semaphore:
     database: true  # install and configure local mariadb
     backup: true  # install service for daily local database backup (if database is managed)
     user: true  # create service-user 'semaphore'
-    ansible_cfg: true  # provision /home/semaphore/ansible.cfg
+    ansible_cfg: true  # provision /home/semaphore/.ansible.cfg
     admin: true  # add admin-user after installation
 
   version: '2.8.90'  # see: https://github.com/ansible-semaphore/semaphore/releases
@@ -168,7 +169,7 @@ semaphore:
     collections: ['community.general']  # any ansible-collections (if persistent_requirements=true)
     roles: []  # any ansible-roles (if persistent_requirements=true)
 
-  ansible_config:  # /home/semaphore/ansible.cfg => if manage.ansible_cfg=true; see: https://docs.ansible.com/ansible/latest/reference_appendices/config.html
+  ansible_config:  # /home/semaphore/.ansible.cfg => if manage.ansible_cfg=true; see: https://docs.ansible.com/ansible/latest/reference_appendices/config.html
     defaults:  # section
       remote_port: 48322
       vault_id_match: 'semaphore'

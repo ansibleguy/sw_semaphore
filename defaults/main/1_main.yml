@@ -10,7 +10,7 @@ defaults_sem:
     database: true  # install and configure local mariadb
     backup: true  # install service for daily local database backup (if database is managed)
     user: true  # create service-user 'semaphore'
-    ansible_cfg: true  # provision /home/semaphore/ansible.cfg
+    ansible_cfg: true  # provision /home/semaphore/.ansible.cfg
     admin: true
 
   version: '2.8.90'

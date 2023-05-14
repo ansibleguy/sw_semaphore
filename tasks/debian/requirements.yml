@@ -10,9 +10,24 @@
     name: 'virtualenv'
     state: present
 
+- name: Semaphore | Requirements | Writing pip-requirements to file
+  ansible.builtin.copy:
+    content: |
+      # ansible_managed
+      # semaphore pip requirements
+
+      {% for module in SEM_CONFIG.requirements.pip %}
+      {{ module }}
+      {% endfor %}
+
+    dest: "{{ SEM_HC.req_prefix }}pip.txt"
+    mode: 0640
+    owner: 'root'
+    group: "{{ SEM_HC.user }}"
+
 - name: Semaphore | Requirements | Installing python3 modules into venv
   ansible.builtin.pip:
-    name: "{{ SEM_CONFIG.requirements.pip }}"
+    requirements: "{{ SEM_HC.req_prefix }}pip.txt"
     virtualenv: "{{ SEM_CONFIG.path.venv }}"
     state: present
 

@@ -1,17 +1,53 @@
 ---
 
+- name: Semaphore | Persistent-Requirements | Writing collection-requirements to file
+  ansible.builtin.copy:
+    content: |
+      ---
+
+      # ansible_managed
+      # semaphore collection requirements
+      
+      collections:
+      {% for col in SEM_CONFIG.requirements.collections %}
+        - '{{ col }}'
+      {% endfor %}
+
+    dest: "{{ SEM_HC.req_prefix }}collections.yml"
+    mode: 0640
+    owner: 'root'
+    group: "{{ SEM_HC.user }}"
+
 - name: Semaphore | Persistent-Requirements | Installing ansible-collections
   ansible.builtin.shell: "source {{ SEM_CONFIG.path.venv }}/bin/activate &&
-  ansible-galaxy collection install {{ item }}"
+  ansible-galaxy collection install {{ item }} -p {{ SEM_HC.collections }}"
   args:
     executable: '/bin/bash'
   register: sem_req_col
   changed_when: "'was installed' in sem_req_col.stdout"
   loop: "{{ SEM_CONFIG.requirements.collections }}"
 
+- name: Semaphore | Persistent-Requirements | Writing role-requirements to file
+  ansible.builtin.copy:
+    content: |
+      ---
+
+      # ansible_managed
+      # semaphore role requirements
+      
+      roles:
+      {% for role in SEM_CONFIG.requirements.roles %}
+        - '{{ role }}'
+      {% endfor %}
+
+    dest: "{{ SEM_HC.req_prefix }}roles.yml"
+    mode: 0640
+    owner: 'root'
+    group: "{{ SEM_HC.user }}"
+
 - name: Semaphore | Persistent-Requirements | Installing ansible-roles
   ansible.builtin.shell: "source {{ SEM_CONFIG.path.venv }}/bin/activate &&
-  ansible-galaxy install {{ item }}"
+  ansible-galaxy role install {{ item }} -p {{ SEM_HC.roles }}"
   args:
     executable: '/bin/bash'
   register: sem_req_role
@@ -31,3 +67,15 @@
     enabled: true
     state: started
     daemon_reload: true
+
+- name: Semaphore | Persistent-Requirements | Updating collections/roles ownership
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: 'root'
+    group: "{{ SEM_HC.user }}"
+    recurse: true
+  loop:
+    - "{{ SEM_HC.roles }}"
+    - "{{ SEM_HC.collections }}"
+  changed_when: false

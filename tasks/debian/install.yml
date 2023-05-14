@@ -19,6 +19,8 @@
     - "{{ SEM_HC.config | dirname }}"
     - "{{ SEM_CONFIG.path.venv }}"
     - "{{ SEM_CONFIG.path.backup }}"
+    - "{{ SEM_HC.collections }}/ansible_collections"
+    - "{{ SEM_HC.roles }}"
 
 - name: Semaphore | Install | Directories (read-write)
   ansible.builtin.file:
@@ -29,6 +31,7 @@
     group: "{{ SEM_HC.user }}"
   loop:
     - "{{ SEM_HC.home }}"
+    - "{{ SEM_CONFIG.path.tmp }}"
 
 - name: Semaphore | Install | Checking if semaphore is installed
   ansible.builtin.stat:
@@ -111,3 +114,8 @@
   args:
     apply:
       tags: webserver
+
+- name: Semaphore | Install | Installing dependencies
+  ansible.builtin.apt:
+    name: "{{ SEM_HC.packages }}"
+    state: present

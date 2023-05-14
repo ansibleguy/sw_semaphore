@@ -9,17 +9,17 @@ Documentation=https://github.com/ansibleguy/sw_semaphore
 
 ExecStart=/bin/bash -c 'source {{ SEM_CONFIG.path.venv }}/bin/activate \
 {% if SEM_CONFIG.requirements.pip | length > 0 %}
-                        && pip install --upgrade {{ SEM_CONFIG.requirements.pip | join(' ') }} \
+                        && pip install --upgrade -r {{ SEM_HC.req_prefix }}pip.txt \
 {% endif %}
 {% if SEM_CONFIG.requirements.collections | length > 0 %}
-                        && ansible-galaxy collection install --upgrade {{ SEM_CONFIG.requirements.collections | join(' ') }} \
+                        && ansible-galaxy collection install --upgrade -p {{ SEM_HC.collections }} -r {{ SEM_HC.req_prefix }}collections.yml \
 {% endif %}
 {% if SEM_CONFIG.requirements.roles | length > 0 %}
-                        && ansible-galaxy install --upgrade {{ SEM_CONFIG.requirements.roles | join(' ') }} \
+                        && ansible-galaxy role install --force -p {{ SEM_HC.roles }} -r {{ SEM_HC.req_prefix }}roles.yml \
 {% endif %}
                         '
 
-ExecStartPost=/bin/bash -c 'chown -R root:{{ SEM_HC.user }} {{ SEM_CONFIG.path.venv }}'
+ExecStartPost=/bin/bash -c 'chown -R root:{{ SEM_HC.user }} {{ SEM_CONFIG.path.venv }} {{ SEM_HC.roles }} {{ SEM_HC.collections }}'
 
 Environment=LANG="en_US.UTF-8"
 Environment=LC_ALL="en_US.UTF-8"
