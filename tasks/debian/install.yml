@@ -5,6 +5,7 @@
     name: "{{ SEM_HC.user }}"
     state: present
     home: "{{ SEM_HC.home }}"
+    shell: '/bin/bash'
   when: SEM_CONFIG.manage.user | bool
 
 - name: Semaphore | Install | Directories (read-only)
@@ -15,10 +16,19 @@
     owner: 'root'
     group: "{{ SEM_HC.user }}"
   loop:
-    - "{{ SEM_HC.home }}"
     - "{{ SEM_HC.config | dirname }}"
     - "{{ SEM_CONFIG.path.venv }}"
     - "{{ SEM_CONFIG.path.backup }}"
+
+- name: Semaphore | Install | Directories (read-write)
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0750
+    owner: "{{ SEM_HC.user }}"
+    group: "{{ SEM_HC.user }}"
+  loop:
+    - "{{ SEM_HC.home }}"
 
 - name: Semaphore | Install | Checking if semaphore is installed
   ansible.builtin.stat:

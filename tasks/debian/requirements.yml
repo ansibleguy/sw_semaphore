@@ -16,6 +16,23 @@
     virtualenv: "{{ SEM_CONFIG.path.venv }}"
     state: present
 
+- name: Semaphore | Requirements | Persistent requirements
+  ansible.builtin.import_tasks: requirements_persistent.yml
+  when:
+    - SEM_CONFIG.persistent_requirements | bool
+    - SEM_CONFIG.requirements.pip | length > 0 or SEM_CONFIG.requirements.collections | length > 0 or SEM_CONFIG.requirements.roles | length > 0
+
+- name: Semaphore | Persistent-Requirements | Disabling Updater
+  ansible.builtin.systemd:
+    name: "{{ SEM_HC.service_req }}.timer"
+    enabled: false
+    state: stopped
+  register: sem_dis_update
+  failed_when:
+    - sem_dis_update.failed
+    - "'Could not find the requested service' not in sem_dis_update.msg"
+  when: not SEM_CONFIG.persistent_requirements | bool
+
 - name: Semaphore | Requirements | Updating venv ownership
   ansible.builtin.file:
     path: "{{ SEM_CONFIG.path.venv }}"
@@ -23,26 +40,3 @@
     owner: 'root'
     group: "{{ SEM_HC.user }}"
     recurse: true
-
-- name: Semaphore | Requirements | Persistent requirements
-  when: SEM_CONFIG.persistent_requirements | bool
-  block:
-    - name: Semaphore | Requirements | Installing ansible-collections
-      ansible.builtin.shell: "source {{ SEM_CONFIG.path.venv }}/bin/activate &&
-      ansible-galaxy collection install {{ item }}"
-      args:
-        executable: '/bin/bash'
-      register: sem_req_col
-      changed_when: "'was installed' in sem_req_col.stdout"
-      loop: "{{ SEM_CONFIG.requirements.collections }}"
-
-    - name: Semaphore | Requirements | Installing ansible-roles
-      ansible.builtin.shell: "source {{ SEM_CONFIG.path.venv }}/bin/activate &&
-      ansible-galaxy install {{ item }}"
-      args:
-        executable: '/bin/bash'
-      register: sem_req_role
-      changed_when: "'was installed' in sem_req_role.stdout"
-      loop: "{{ SEM_CONFIG.requirements.roles }}"
-
-# todo: service/timer to update python-modules,collections,roles

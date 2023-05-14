@@ -59,11 +59,13 @@ ansible-galaxy install -r requirements.yml
     * Nginx proxy => using [THIS Role](https://github.com/ansibleguy/infra_nginx)
     * MariaDB database => using [THIS Role](https://github.com/ansibleguy/infra_mariadb)
     * Daily local database backup (_if database is managed_)
+      * Backup service: 'semaphore-backup.service'
     * Provisioning 'ansible.cfg' for serviceuser
     * Adding admin-user after installation
 
   * **Default opt-outs**:
     * Persistent requirements
+      * Update service: 'semaphore-requirements.service'
 
 ## Info
 

@@ -1,0 +1,13 @@
+# {{ ansible_managed }}
+# ansibleguy.sw_semaphore
+
+[Unit]
+Description=Timer to update Ansible-Semaphore requirements
+
+[Timer]
+OnCalendar={{ SEM_CONFIG.requirements.timer }}
+Persistent=false
+WakeSystem=false
+
+[Install]
+WantedBy=multi-user.target

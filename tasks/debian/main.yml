@@ -18,3 +18,16 @@
   ansible.builtin.import_tasks: backup.yml
   when: SEM_CONFIG.manage.backup | bool
   tags: backup
+
+- name: Semaphore | Disabling Backup
+  ansible.builtin.systemd:
+    name: "{{ SEM_HC.service_backup }}.timer"
+    enabled: false
+    state: stopped
+  register: sem_dis_backup
+  failed_when:
+    - sem_dis_backup.failed
+    - "'Could not find the requested service' not in sem_dis_backup.msg"
+  when: not SEM_CONFIG.manage.backup | bool
+  tags: backup
+

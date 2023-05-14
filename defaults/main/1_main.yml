@@ -34,6 +34,7 @@ defaults_sem:
       - 'jmespath'  # 'community.general.json_query' jinja-filter
     collections: []
     roles: []
+    timer: '*-*-* 22:00:00'  # timer to execute requirements-update if 'persistent_requirements=true'; daily 22h
 
   admin:
     user: 'admin'
@@ -151,6 +152,6 @@ defaults_sem:
   backup:
     path: '/var/backups/semaphore'
     retention_days: 14
-    timer: '*-*-* 23:00:00'
+    timer: '*-*-* 23:00:00'  # daily 23h
 
 semaphore: {}

@@ -10,4 +10,5 @@ SEM_HC:
   user: 'semaphore'
   home: '/home/semaphore'
   service: 'semaphore.service'
-  service_backup: 'backup-semaphore'
+  service_req: 'semaphore-requirements'
+  service_backup: 'semaphore-backup'

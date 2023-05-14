@@ -6,6 +6,11 @@
     no_prompts: true  # mariadb prompts
 
     semaphore:
+      persistent_requirements: true
+      requirements:
+        pip: ['httpx']
+        collections: ['ansible.utils', 'community.crypto', 'community.general']
+        roles: ['ansibleguy.infra_nftables']
       nginx:
         domain: 'semaphore.test.ansibleguy.net'
       admin:

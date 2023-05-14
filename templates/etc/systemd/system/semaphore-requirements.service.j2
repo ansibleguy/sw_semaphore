@@ -1,0 +1,37 @@
+# {{ ansible_managed }}
+# ansibleguy.sw_semaphore
+
+[Unit]
+Description=Ansible Semaphore Requirements-Updater
+Documentation=https://github.com/ansibleguy/sw_semaphore
+
+[Service]
+
+ExecStart=/bin/bash -c 'source {{ SEM_CONFIG.path.venv }}/bin/activate \
+{% if SEM_CONFIG.requirements.pip | length > 0 %}
+                        && pip install --upgrade {{ SEM_CONFIG.requirements.pip | join(' ') }} \
+{% endif %}
+{% if SEM_CONFIG.requirements.collections | length > 0 %}
+                        && ansible-galaxy collection install --upgrade {{ SEM_CONFIG.requirements.collections | join(' ') }} \
+{% endif %}
+{% if SEM_CONFIG.requirements.roles | length > 0 %}
+                        && ansible-galaxy install --upgrade {{ SEM_CONFIG.requirements.roles | join(' ') }} \
+{% endif %}
+                        '
+
+ExecStartPost=/bin/bash -c 'chown -R root:{{ SEM_HC.user }} {{ SEM_CONFIG.path.venv }}'
+
+Environment=LANG="en_US.UTF-8"
+Environment=LC_ALL="en_US.UTF-8"
+
+{% if ansible_distribution_version == '10' %}
+StandardOutput=syslog
+StandardError=syslog
+{% else %}
+StandardOutput=journal
+StandardError=journal
+{% endif %}
+SyslogIdentifier=semaphore_requirements
+
+[Install]
+WantedBy=multi-user.target

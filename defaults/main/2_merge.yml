@@ -1,6 +1,6 @@
 ---
 
-SEM_CONFIG: "{{ defaults_sem | combine(semaphore, recursive=true) }}"
+SEM_CONFIG: "{{ defaults_sem | combine(semaphore, recursive=true, list_merge='append') }}"
 
 sem_conditionals_config:
   mysql:

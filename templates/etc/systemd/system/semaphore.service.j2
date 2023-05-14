@@ -17,6 +17,9 @@ Group={{ SEM_HC.user }}
 Restart=on-failure
 RestartSec=10s
 
+Environment=LANG="en_US.UTF-8"
+Environment=LC_ALL="en_US.UTF-8"
+
 {% if ansible_distribution_version == '10' %}
 StandardOutput=syslog
 StandardError=syslog
