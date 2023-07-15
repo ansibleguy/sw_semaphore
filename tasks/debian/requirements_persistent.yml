@@ -7,7 +7,7 @@
 
       # ansible_managed
       # semaphore collection requirements
-      
+
       collections:
       {% for col in SEM_CONFIG.requirements.collections %}
         - '{{ col }}'
@@ -34,7 +34,7 @@
 
       # ansible_managed
       # semaphore role requirements
-      
+
       roles:
       {% for role in SEM_CONFIG.requirements.roles %}
         - '{{ role }}'
