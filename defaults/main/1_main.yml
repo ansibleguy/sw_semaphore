@@ -129,7 +129,7 @@ defaults_sem:
 
     proxy:
       proto: 'http'
-      port: 3000
+      port: 3000  # also in 'config_additions' below
 
     # see: https://docs.ansible-semaphore.com/administration-guide/security#ssl
     config_additions_root:
@@ -139,7 +139,7 @@ defaults_sem:
     config_additions:
       - 'chunked_transfer_encoding on;'
       - 'location /api/ws {'
-      - '  proxy_pass http://127.0.0.1/api/ws;'
+      - '  proxy_pass http://127.0.0.1:3000/api/ws;'
       - '  proxy_http_version 1.1;'
       - '  proxy_set_header Upgrade $http_upgrade;'
       - '  proxy_set_header Connection "upgrade";'
