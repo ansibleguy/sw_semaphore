@@ -9,6 +9,6 @@ collections:
   - 'community.crypto'
 
 roles:
-  - src: 'ansibleguy.infra_apache'
   - src: 'ansibleguy.infra_certs'
   - src: 'ansibleguy.infra_mariadb'
+  - src: 'ansibleguy.infra_nginx'
