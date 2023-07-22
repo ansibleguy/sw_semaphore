@@ -23,6 +23,9 @@
   ansible-galaxy collection install {{ item }} -p {{ SEM_HC.collections }}"
   args:
     executable: '/bin/bash'
+  environment:
+    LANG: 'en_US.UTF-8'
+    LC_ALL: 'en_US.UTF-8'
   register: sem_req_col
   changed_when: "'was installed' in sem_req_col.stdout"
   loop: "{{ SEM_CONFIG.requirements.collections }}"
@@ -50,6 +53,9 @@
   ansible-galaxy role install {{ item }} -p {{ SEM_HC.roles }}"
   args:
     executable: '/bin/bash'
+  environment:
+    LANG: 'en_US.UTF-8'
+    LC_ALL: 'en_US.UTF-8'
   register: sem_req_role
   changed_when: "'was installed' in sem_req_role.stdout"
   loop: "{{ SEM_CONFIG.requirements.roles }}"
