@@ -42,11 +42,12 @@
     name: "{{ SEM_HC.service_req }}.timer"
     enabled: false
     state: stopped
+  when: not SEM_CONFIG.persistent_requirements | bool
   register: sem_dis_update
   failed_when:
     - sem_dis_update.failed
-    - "'Could not find the requested service' not in sem_dis_update.msg"
-  when: not SEM_CONFIG.persistent_requirements | bool
+    - "'does not exist' not in sem_dis_update.msg"
+    - "'Could not find' not in sem_dis_update.msg"
 
 - name: Semaphore | Requirements | Updating venv ownership
   ansible.builtin.file:

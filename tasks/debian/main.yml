@@ -24,9 +24,10 @@
     name: "{{ SEM_HC.service_backup }}.timer"
     enabled: false
     state: stopped
+  when: not SEM_CONFIG.manage.backup | bool
+  tags: backup
   register: sem_dis_backup
   failed_when:
     - sem_dis_backup.failed
-    - "'Could not find the requested service' not in sem_dis_backup.msg"
-  when: not SEM_CONFIG.manage.backup | bool
-  tags: backup
+    - "'does not exist' not in sem_dis_backup.msg"
+    - "'Could not find' not in sem_dis_backup.msg"
