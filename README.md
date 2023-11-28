@@ -14,6 +14,7 @@ Semaphore is a lightweight alternative to [Ansible AWX](ttps://github.com/ansibl
 [![Ansible-Lint Test Status](https://badges.ansibleguy.net/sw_semaphore.ansiblelint.svg)](https://github.com/ansibleguy/_meta_cicd/blob/latest/templates/usr/local/bin/cicd/ansiblelint.sh.j2)
 [![Ansible Galaxy](https://badges.ansibleguy.net/galaxy.badge.svg)](https://galaxy.ansible.com/ui/standalone/roles/ansibleguy/sw_semaphore)
 
+[Molecule Logs (if failed)](https://badges.ansibleguy.net/log/molecule_sw_semaphore_test.log)
 
 **Tested:**
 * Debian 11
