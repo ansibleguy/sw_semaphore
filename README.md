@@ -22,6 +22,10 @@ Semaphore is a lightweight alternative to [Ansible AWX](ttps://github.com/ansibl
 
 
 ```bash
+# latest
+ansible-galaxy role install git+https://github.com/ansibleguy/sw_semaphore
+
+# from galaxy
 ansible-galaxy install ansibleguy.sw_semaphore
 
 # or to custom role-path
