@@ -20,7 +20,7 @@
 
 - name: Semaphore | Persistent-Requirements | Installing ansible-collections
   ansible.builtin.shell: "source {{ SEM_CONFIG.path.venv }}/bin/activate &&
-  ansible-galaxy collection install {{ item }} -p {{ SEM_HC.collections }}"
+  ansible-galaxy collection install -r {{ SEM_HC.req_prefix }}collections.yml -p {{ SEM_HC.collections }}"
   args:
     executable: '/bin/bash'
   environment:
@@ -28,7 +28,6 @@
     LC_ALL: 'en_US.UTF-8'
   register: sem_req_col
   changed_when: "'was installed' in sem_req_col.stdout"
-  loop: "{{ SEM_CONFIG.requirements.collections }}"
 
 - name: Semaphore | Persistent-Requirements | Writing role-requirements to file
   ansible.builtin.copy:
@@ -50,7 +49,7 @@
 
 - name: Semaphore | Persistent-Requirements | Installing ansible-roles
   ansible.builtin.shell: "source {{ SEM_CONFIG.path.venv }}/bin/activate &&
-  ansible-galaxy role install {{ item }} -p {{ SEM_HC.roles }}"
+  ansible-galaxy role install -r {{ SEM_HC.req_prefix }}roles.yml -p {{ SEM_HC.roles }}"
   args:
     executable: '/bin/bash'
   environment:
@@ -58,7 +57,6 @@
     LC_ALL: 'en_US.UTF-8'
   register: sem_req_role
   changed_when: "'was installed' in sem_req_role.stdout"
-  loop: "{{ SEM_CONFIG.requirements.roles }}"
 
 - name: Semaphore | Persistent-Requirements | Update-service
   ansible.builtin.template:
