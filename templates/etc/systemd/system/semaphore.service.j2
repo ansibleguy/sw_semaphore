@@ -1,7 +1,10 @@
 [Unit]
 Description=Ansible Semaphore
 Requires=network.target{% if SEM_CONFIG.manage.database %} mariadb@semaphore.service{% endif %}
-{% if SEM_CONFIG.manage.webserver %}Wants=nginx.service{% endif %}
+
+{% if SEM_CONFIG.manage.webserver %}
+Wants=nginx.service
+{% endif %}
 
 ConditionPathExists={{ SEM_HC.bin }}
 ConditionPathExists={{ SEM_HC.config }}
